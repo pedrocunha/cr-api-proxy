@@ -48,5 +48,6 @@ func main() {
 		fmt.Fprintf(w, "%q", body)
 	})
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	port := os.Getenv("PORT")
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

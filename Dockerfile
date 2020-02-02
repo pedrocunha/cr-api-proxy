@@ -1,23 +1,14 @@
-FROM heroku/heroku:18-build as build
-
+FROM golang:1.13.7-alpine3.11 as build
 COPY . /app
 WORKDIR /app
+RUN mkdir -p bin
 
-# Setup buildpack
-RUN mkdir -p /tmp/buildpack/heroku/go /tmp/build_cache /tmp/env
-RUN curl https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/go.tgz | tar xz -C /tmp/buildpack/heroku/go
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOARCH=amd64
+RUN go build -v -o bin/server .
 
-# Execute Buildpack
-RUN STACK=heroku-18 /tmp/buildpack/heroku/go/bin/compile /app /tmp/build_cache /tmp/env
-
-# Prepare final, minimal image
-FROM heroku/heroku:18
-
+### Put the binary onto Heroku image
+FROM heroku/heroku:16
 COPY --from=build /app /app
-ENV HOME /app
-WORKDIR /app
-
-RUN useradd -m heroku
-USER heroku
-
-CMD /app/bin/server
+CMD ["/app/bin/server"]

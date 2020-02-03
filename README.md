@@ -8,7 +8,12 @@ This is a simple Go server that proxies requests to `https://api.clashroyale.com
 - `PASSWORD` - Basic Auth required to use the proxy
 
 
-Example how to start the server:
+Example how to start the server locally:
 ```
 PORT=8080 TOKEN=XXXX go run server.go
+```
+
+Then you can do something like:
+```
+curl -v "127.0.0.1:8080/v1/players/%232GJ82VQ99/upcomingchests"
 ```
